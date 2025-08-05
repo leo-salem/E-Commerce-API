@@ -20,12 +20,7 @@ public class ECommercyApplication {
 	public CommandLineRunner commandLineRunner(AppDao appDao) {
 
 		return runner -> {
-//			System.out.println("run");
-			createUserAndCart(appDao);
-//			findUserAndCartByUserId(appDao);
-			UpdateTheUser(appDao);
-//			DeleteUserById(appDao);
-			createUserAdminAndCategory(appDao);
+
 
 		};
 	}
@@ -46,7 +41,7 @@ public class ECommercyApplication {
 
 	private void UpdateTheUser(AppDao appDao) {
 		User user = appDao.findUserById(1);
-		user.setEmail("LeoSalem@gmail.com");
+		user.setUsername("LeoSalem@gmail.com");
 		appDao.UpdateUser(user);
 	}
 

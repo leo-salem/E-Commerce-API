@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final AuthEntryPointJwt unauthorizedHandler;
 
     @Autowired
-    public SecurityConfig(AuthTokenFilter authTokenFilter,AuthEntryPointJwt unauthorizedEntryPoint) {
+    public SecurityConfig(AuthTokenFilter authTokenFilter, AuthEntryPointJwt unauthorizedEntryPoint) {
         this.authTokenFilter = authTokenFilter;
         this.unauthorizedHandler = unauthorizedEntryPoint;
     }
@@ -35,13 +35,10 @@ public class SecurityConfig {
     @Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-
         jdbcUserDetailsManager.setUsersByUsernameQuery(
-                "select email as username, password as password, true as enabled from users where username=?");
-
+                "select username, password, true as enabled from users where username=?");
         jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
-                "select username as username, hasRole as authority from users where username=?");
-
+                "select username, hasRole as authority from users where username=?");
         return jdbcUserDetailsManager;
     }
 
@@ -52,7 +49,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/api/signin", "/api/signup").permitAll()
+                .requestMatchers("/api/signin", "/api/signup", "/api/refresh-token").permitAll()
                 .anyRequest().authenticated()
         );
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));

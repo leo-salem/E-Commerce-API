@@ -2,9 +2,7 @@ package API.com.example.E_COMMERCY.model;
 
 import API.com.example.E_COMMERCY.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +12,8 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -29,10 +29,10 @@ public class User {
     private Role hasRole;
 
     @Column(name = "lastName",nullable = false)
-    private String LastName;
+    private String lastName;
 
     @Column(name = "firstName",nullable = false)
-    private String FirstName;
+    private String firstName;
 
     @Column(name = "adress",nullable = false)
     private String adress;
@@ -73,93 +73,6 @@ public class User {
         this.adress = adress;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setEmail(String username) {
-        this.username = username;
-    }
-
-    public String getAdress() {
-        return adress;
-    }
-
-    public void setAdress(String adress) {
-        this.adress = adress;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getLastName() {
-        return LastName;
-    }
-
-    public void setLastName(String lastName) {
-        LastName = lastName;
-    }
-
-    public String getFirstName() {
-        return FirstName;
-    }
-
-    public void setFirstName(String firstName) {
-        FirstName = firstName;
-    }
-
-    public Role getHasRole() {
-        return hasRole;
-    }
-
-    public void setHasRole(Role hasRole) {
-        this.hasRole = hasRole;
-    }
-
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public Set<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
-    }
-
-    public Set<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Set<Product> products) {
-        this.products = products;
-    }
-
-    public Set<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Set<Category> categories) {
-        this.categories = categories;
-    }
 
     public void addProduct(Product product) {
         if (products == null) {

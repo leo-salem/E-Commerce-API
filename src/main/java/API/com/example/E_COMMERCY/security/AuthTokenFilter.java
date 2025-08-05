@@ -1,5 +1,6 @@
 package API.com.example.E_COMMERCY.security;
 
+import API.com.example.E_COMMERCY.service.token.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Lazy
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    @Lazy
+    private TokenService tokenService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -33,15 +38,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
             String token = jwtUtils.getJwtFromHeader(request);
 
-            if (token != null&&jwtUtils.validateJwtToken(token)) {
+            if (token != null&&jwtUtils.validateJwtToken(token)&&jwtUtils.isAccessToken(token)) {
 
                 String username = jwtUtils.getUsernameFromJwtToken(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (tokenService.isAccessTokenValid(username,token)) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities()
+                    );
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
         catch (Exception e) {

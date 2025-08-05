@@ -1,10 +1,7 @@
 package API.com.example.E_COMMERCY.security;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.*;
+        import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +19,10 @@ public class JwtUtils {
     private String Secret;
 
     @Value("${spring.app.jwtExpirationMs}")
-    private long Expirations;
+    private long accessTokenExpiration;
 
-
+    @Value("${spring.app.jwtRefreshExpirationMs}")
+    private long refreshTokenExpiration;
 
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -34,16 +32,27 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateJwtFromUsername(UserDetails userDetails) {
-        String username = userDetails.getUsername();
+    public String generateAccessToken(UserDetails userDetails) {
         return Jwts.builder()
-                .subject(username)
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime()+Expirations))
+                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(key())
                 .claim("role", userDetails.getAuthorities())
+                .claim("token_type", "ACCESS")
                 .compact();
     }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+                .signWith(key())
+                .claim("token_type", "REFRESH")
+                .compact();
+    }
+
     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(Secret));
     }
@@ -57,6 +66,42 @@ public class JwtUtils {
                 .getSubject();
     }
 
+    public boolean isAccessToken(String token) {
+        String type = Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("token_type", String.class);
+        return "ACCESS".equals(type);
+    }
+
+    public boolean isRefreshToken(String token) {
+        String type = Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("token_type", String.class);
+        return "REFRESH".equals(type);
+    }
+
+    public long getRemainingExpiration(String token) {
+        Date expirationDate = Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+
+        long now = System.currentTimeMillis();
+        long diffInMillis = expirationDate.getTime() - now;
+
+        return Math.max(diffInMillis / 1000, 0);
+    }
+
+
+
     public Boolean validateJwtToken(String token) {
         try {
             Jwts.parser()
@@ -69,6 +114,4 @@ public class JwtUtils {
             return false;
         }
     }
-
-
 }

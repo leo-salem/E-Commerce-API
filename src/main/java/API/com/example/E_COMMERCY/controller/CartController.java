@@ -1,4 +1,4 @@
 package API.com.example.E_COMMERCY.controller;
 
-public class Product {
+public class CartController {
 }

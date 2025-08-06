@@ -1,28 +1,19 @@
-package API.com.example.E_COMMERCY.dto.product;
+package API.com.example.E_COMMERCY.dto.product.request;
 
 import API.com.example.E_COMMERCY.dto.category.CategoryResponseDto;
-import API.com.example.E_COMMERCY.dto.user.UserResponseDto;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductResponseDto {
-
-    private int id;
-
+public class ChangeProductCategoryRequest {
+    @NotBlank
     private String name;
-
-    private double price;
-
-    private String description;
-
+    @NotBlank
     private CategoryResponseDto categoryResponseDto;
-
-    private UserResponseDto userResponseDto;
 }

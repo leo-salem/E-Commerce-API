@@ -4,7 +4,7 @@ import API.com.example.E_COMMERCY.dto.user.UserMapper;
 import API.com.example.E_COMMERCY.dto.user.request.ChangeNameRequestDto;
 import API.com.example.E_COMMERCY.dto.user.request.ChangePasswordRequestDto;
 import API.com.example.E_COMMERCY.dto.user.request.DeleteUserRequestDto;
-import API.com.example.E_COMMERCY.dto.user.response.UserResponseDto;
+import API.com.example.E_COMMERCY.dto.user.UserResponseDto;
 import API.com.example.E_COMMERCY.exception.InvalidPasswordException;
 import API.com.example.E_COMMERCY.exception.UserNotFoundException;
 import API.com.example.E_COMMERCY.model.User;

@@ -3,7 +3,7 @@ package API.com.example.E_COMMERCY.service.user;
 import API.com.example.E_COMMERCY.dto.user.request.ChangeNameRequestDto;
 import API.com.example.E_COMMERCY.dto.user.request.ChangePasswordRequestDto;
 import API.com.example.E_COMMERCY.dto.user.request.DeleteUserRequestDto;
-import API.com.example.E_COMMERCY.dto.user.response.UserResponseDto;
+import API.com.example.E_COMMERCY.dto.user.UserResponseDto;
 import API.com.example.E_COMMERCY.model.User;
 
 import java.util.List;

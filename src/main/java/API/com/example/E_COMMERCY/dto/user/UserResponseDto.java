@@ -1,10 +1,9 @@
-package API.com.example.E_COMMERCY.dto.user.response;
+package API.com.example.E_COMMERCY.dto.user;
 
 import API.com.example.E_COMMERCY.dto.order.OrderResponseDto;
 import API.com.example.E_COMMERCY.enums.Role;
 
 import API.com.example.E_COMMERCY.model.Cart;
-import API.com.example.E_COMMERCY.model.Order;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,4 +1,5 @@
-package API.com.example.E_COMMERCY.dto.cart;
+package API.com.example.E_COMMERCY.dto.cart.request;
+
 
 import API.com.example.E_COMMERCY.dto.cartItem.CartItemResponseDto;
 import jakarta.validation.constraints.NotBlank;
@@ -7,16 +8,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CartResponseDto {
+public class UpdateCartItemRequestDto {
+    @NotBlank
+    public CartItemResponseDto cartItemResponseDto;
 
-
-    private Long id;
-
-
-    private Set<CartItemResponseDto> cartItemResponseDtoSet;
+    @NotBlank
+    public int quantity;
 }

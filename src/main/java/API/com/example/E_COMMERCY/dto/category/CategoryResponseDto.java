@@ -18,7 +18,7 @@ import java.util.Set;
 @Builder
 public class CategoryResponseDto {
 
-    private int id;
+    private Long id;
 
     private String name;
 

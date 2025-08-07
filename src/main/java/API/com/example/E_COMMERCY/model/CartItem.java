@@ -20,8 +20,6 @@ public class CartItem {
     @Column(name = "Quantity",nullable = false)
     private int Quantity;
 
-    @Column(name = "Price",nullable = false)
-    private int Price;
 
     @ManyToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
@@ -39,12 +37,11 @@ public class CartItem {
     public CartItem() {
     }
 
-    public CartItem( int Quantity, int Price) {
+    public CartItem( int Quantity) {
         this.Quantity = Quantity;
-        this.Price = Price;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -60,13 +57,6 @@ public class CartItem {
         Quantity = quantity;
     }
 
-    public int getPrice() {
-        return Price;
-    }
-
-    public void setPrice(int price) {
-        Price = price;
-    }
 
     public Product getProduct() {
         return product;
@@ -89,7 +79,6 @@ public class CartItem {
         return "CartItem{" +
                 "id=" + id +
                 ", Quantity=" + Quantity +
-                ", Price=" + Price +
                 '}';
     }
 }

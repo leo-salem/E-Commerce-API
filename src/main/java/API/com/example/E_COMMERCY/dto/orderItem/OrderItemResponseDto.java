@@ -1,5 +1,6 @@
 package API.com.example.E_COMMERCY.dto.orderItem;
 
+import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
 import API.com.example.E_COMMERCY.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,11 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderItemResponseDto {
 
-    private int id;
+    private Long id;
 
     private int Quantity;
 
-    private int Price;
-
-    private Product product;
+    private ProductResponseDto productResponseDto;
 }

@@ -16,18 +16,20 @@ import java.util.Set;
 @Builder
 public class OrderResponseDto {
 
-    private int id;
+    private Long id;
 
 
     private Date date;
 
 
-    private int amount;
+    private double total;
 
 
     private String PaymentMethod;
 
 
     private Set<OrderItemResponseDto> orderItemResponseDtoSet;
+
+
 
 }

@@ -59,7 +59,7 @@ public class Product {
         this.description = description;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

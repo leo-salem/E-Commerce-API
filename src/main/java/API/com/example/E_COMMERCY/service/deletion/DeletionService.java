@@ -80,5 +80,19 @@ public class DeletionService implements DeletionInterface{
         cart.setUser(null);
         em.remove(em.contains(cart) ? cart : em.merge(cart));
     }
+    @Transactional
+    @Override
+    public void deleteCartItem(CartItem cartItem) {
+        if (cartItem.getCart()!=null){
+            cartItem.getCart().getCartItems().remove(cartItem);
+        }
+        if (cartItem.getProduct()!=null){
+            cartItem.getProduct().getCartItems().remove(cartItem);
+        }
+        cartItem.setCart(null);
+        cartItem.setProduct(null);
+        em.remove(em.contains(cartItem) ? cartItem : em.merge(cartItem));
+    }
+
 
 }

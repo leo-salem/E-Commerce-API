@@ -20,9 +20,6 @@ public class OrderItem {
     @Column(name = "Quantity",nullable = false)
     private int Quantity;
 
-    @Column(name = "Price",nullable = false)
-    private int Price;
-
     @ManyToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
@@ -38,12 +35,11 @@ public class OrderItem {
     public OrderItem() {
     }
 
-    public OrderItem(int Quantity, int Price) {
+    public OrderItem(int Quantity) {
         this.Quantity = Quantity;
-        this.Price = Price;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -75,20 +71,12 @@ public class OrderItem {
         Quantity = quantity;
     }
 
-    public int getPrice() {
-        return Price;
-    }
-
-    public void setPrice(int price) {
-        Price = price;
-    }
 
     @Override
     public String toString() {
         return "OrderItem{" +
                 "id=" + id +
                 ", Quantity=" + Quantity +
-                ", Price=" + Price +
                 '}';
     }
 }

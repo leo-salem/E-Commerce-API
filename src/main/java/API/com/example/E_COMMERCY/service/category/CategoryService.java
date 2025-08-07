@@ -71,6 +71,7 @@ public class CategoryService implements CategoryInterface {
         Set<Product>products =category.getProducts();
         for (Product product : products){
             product.setCategory(category);
+            productRepository.save(product);
         }
         categoryRepository.save(category);
     }
@@ -113,6 +114,7 @@ public class CategoryService implements CategoryInterface {
         category.setProducts(products);
         for (Product product : products){
             product.setCategory(category);
+            productRepository.save(product);
         }
         categoryRepository.save(category);
     }

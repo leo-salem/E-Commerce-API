@@ -22,8 +22,8 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    @Column(name = "amount",nullable = false)
-    private int amount;
+    @Column(name = "total",nullable = false)
+    private double total;
 
     @Column(name = "PaymentMethod",nullable = false)
     private String PaymentMethod;
@@ -44,13 +44,13 @@ public class Order {
 
     }
 
-    public Order(Date date, int amount, String PaymentMethod) {
+    public Order(Date date, double total, String PaymentMethod) {
         this.date = date;
-        this.amount = amount;
+        this.total = total;
         this.PaymentMethod = PaymentMethod;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -74,12 +74,12 @@ public class Order {
         PaymentMethod = paymentMethod;
     }
 
-    public int getAmount() {
-        return amount;
+    public double getTotal() {
+        return total;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setTotal(double amount) {
+        this.total = amount;
     }
 
 

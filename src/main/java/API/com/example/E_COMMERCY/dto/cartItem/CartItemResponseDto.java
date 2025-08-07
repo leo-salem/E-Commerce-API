@@ -1,5 +1,6 @@
 package API.com.example.E_COMMERCY.dto.cartItem;
 
+import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
 import API.com.example.E_COMMERCY.model.Product;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -14,11 +15,9 @@ import lombok.NoArgsConstructor;
 public class CartItemResponseDto {
 
 
-    private int id;
+    private Long id;
 
-    private int Quantity;
+    private int quantity;
 
-    private int Price;
-
-    private Product product;
+    private ProductResponseDto productResponseDto;
 }

@@ -54,7 +54,7 @@ public class CategoryMapper {
 
     public Category toEntity(CategoryResponseDto dto) {
         return Category.builder()
-                .id(dto.getId())
+                .id(Math.toIntExact(dto.getId()))
                 .name(dto.getName())
                 .products(dto.getProductResponseDtoSet().stream()
                         .map(productMapper::toEntity)

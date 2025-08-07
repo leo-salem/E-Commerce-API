@@ -21,6 +21,7 @@ public class ProductMapper {
 
     private final UserService userService;
 
+
     public ProductResponseDto toDto(Product product) {
         return ProductResponseDto.builder()
                 .name(product.getName())
@@ -43,7 +44,7 @@ public class ProductMapper {
 
     public Product toEntity(ProductResponseDto dto) {
         return Product.builder()
-                .id(dto.getId())
+                .id(Math.toIntExact(dto.getId()))
                 .name(dto.getName())
                 .price(dto.getPrice())
                 .description(dto.getDescription())

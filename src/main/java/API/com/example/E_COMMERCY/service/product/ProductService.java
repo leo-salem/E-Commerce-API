@@ -66,6 +66,7 @@ public class ProductService implements ProductInterface{
         }
         Product product = productMapper.toEntity(newProductRequestDto);
         product.getCategory().getProducts().add(product);
+        categoryRepository.save(product.getCategory());
         productRepository.save(product);
     }
 
@@ -109,6 +110,7 @@ public class ProductService implements ProductInterface{
                 .orElseThrow (() -> new CategoryNotFoundException("No Category found with name: " + categoryName));
         product.setCategory(category);
         category.getProducts().add(product);
+        categoryRepository.save(category);
         productRepository.save(product);
     }
 

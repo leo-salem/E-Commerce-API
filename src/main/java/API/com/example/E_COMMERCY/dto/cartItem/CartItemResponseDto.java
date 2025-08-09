@@ -1,6 +1,7 @@
 package API.com.example.E_COMMERCY.dto.cartItem;
 
 import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
+import API.com.example.E_COMMERCY.dto.slimDTOs.ProductResponseSlimDto;
 import API.com.example.E_COMMERCY.model.Product;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -19,5 +20,5 @@ public class CartItemResponseDto {
 
     private int quantity;
 
-    private ProductResponseDto productResponseDto;
+    private ProductResponseSlimDto productResponseDto;
 }

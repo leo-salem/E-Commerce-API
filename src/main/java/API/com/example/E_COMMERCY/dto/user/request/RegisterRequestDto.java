@@ -21,10 +21,10 @@ public class RegisterRequestDto {
     private String username;
 
     @NotBlank
-    private String LastName;
+    private String lastName;
 
     @NotBlank
-    private String FirstName;
+    private String firstName;
 
     @NotBlank
     private String adress;

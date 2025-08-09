@@ -4,7 +4,7 @@ import API.com.example.E_COMMERCY.dto.cart.CartResponseDto;
 import API.com.example.E_COMMERCY.dto.cart.request.AddCartItemRequestDto;
 import API.com.example.E_COMMERCY.dto.cart.request.DeleteCartItemRequestDto;
 import API.com.example.E_COMMERCY.dto.cart.request.UpdateCartItemRequestDto;
-import API.com.example.E_COMMERCY.exception.CartItemNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.CartItemNotFoundException;
 
 public interface CartInterface {
     public CartResponseDto displayCart();

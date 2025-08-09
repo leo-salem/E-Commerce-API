@@ -2,8 +2,8 @@ package API.com.example.E_COMMERCY.service.order;
 
 import API.com.example.E_COMMERCY.dto.order.OrderMapper;
 import API.com.example.E_COMMERCY.dto.order.OrderResponseDto;
-import API.com.example.E_COMMERCY.exception.CartIsEmptyException;
-import API.com.example.E_COMMERCY.exception.OrderNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.CartIsEmptyException;
+import API.com.example.E_COMMERCY.exception.customExceptions.OrderNotFoundException;
 import API.com.example.E_COMMERCY.model.Cart;
 import API.com.example.E_COMMERCY.model.Order;
 import API.com.example.E_COMMERCY.repository.OrderRepository;

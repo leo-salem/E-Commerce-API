@@ -1,6 +1,7 @@
 package API.com.example.E_COMMERCY.dto.category;
 
 import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
+import API.com.example.E_COMMERCY.dto.slimDTOs.ProductResponseSlimDto;
 import API.com.example.E_COMMERCY.dto.user.UserResponseDto;
 import API.com.example.E_COMMERCY.model.Product;
 import API.com.example.E_COMMERCY.model.User;
@@ -22,7 +23,7 @@ public class CategoryResponseDto {
 
     private String name;
 
-    private Set<ProductResponseDto> productResponseDtoSet;
+    private Set<ProductResponseSlimDto> productResponseDtoSet;
 
     private UserResponseDto userResponseDto;
 

@@ -1,4 +1,4 @@
-package API.com.example.E_COMMERCY.exception;
+package API.com.example.E_COMMERCY.exception.customExceptions;
 
 public class CartItemNotFoundException extends Exception{
     public CartItemNotFoundException(){

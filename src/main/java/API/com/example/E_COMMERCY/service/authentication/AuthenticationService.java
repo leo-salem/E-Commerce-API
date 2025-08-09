@@ -4,10 +4,10 @@ import API.com.example.E_COMMERCY.dto.AuthenticationResponseDto;
 import API.com.example.E_COMMERCY.dto.user.UserMapper;
 import API.com.example.E_COMMERCY.dto.user.request.LoginRequestDto;
 import API.com.example.E_COMMERCY.dto.user.request.RegisterRequestDto;
-import API.com.example.E_COMMERCY.exception.InvalidPasswordException;
-import API.com.example.E_COMMERCY.exception.InvalidTokenException;
-import API.com.example.E_COMMERCY.exception.UserNotFoundException;
-import API.com.example.E_COMMERCY.exception.UsernameAlreadyExistException;
+import API.com.example.E_COMMERCY.exception.customExceptions.InvalidPasswordException;
+import API.com.example.E_COMMERCY.exception.customExceptions.InvalidTokenException;
+import API.com.example.E_COMMERCY.exception.customExceptions.UserNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.UsernameAlreadyExistException;
 import API.com.example.E_COMMERCY.model.User;
 import API.com.example.E_COMMERCY.repository.UserRepository;
 import API.com.example.E_COMMERCY.security.JwtUtils;
@@ -16,6 +16,7 @@ import API.com.example.E_COMMERCY.service.tokenBlacklist.TokenBlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -61,11 +62,15 @@ public class AuthenticationService implements AutheticationInterface{
     public void Register(RegisterRequestDto registerRequestDto) throws UsernameAlreadyExistException {
         String username = registerRequestDto.getUsername();
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new UsernameAlreadyExistException("Username " + username + " is already taken");
+            throw new AuthenticationServiceException("Username already exists",
+                    new UsernameAlreadyExistException());
         }
-
+        if (!registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
+            throw new AuthenticationServiceException("invalid password",new  InvalidPasswordException());
+        }
         User user = userMapper.toEntity(registerRequestDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        System.out.println("Encoded password at register: " + user.getPassword());
         userRepository.save(user);
     }
 
@@ -76,9 +81,22 @@ public class AuthenticationService implements AutheticationInterface{
             String username = loginRequestDto.getUsername();
             String password = loginRequestDto.getPassword();
 
+            var userOpt = userRepository.findByUsername(username);
+            if (userOpt.isPresent()) {
+                var userEntity = userOpt.get();
+                System.out.println("Raw password entered: " + password);
+                System.out.println("Encoded password in DB: " + userEntity.getPassword());
+                System.out.println("Matches? " + passwordEncoder.matches(password, userEntity.getPassword()));
+            } else {
+                System.out.println("User not found in DB");
+            }
+
+
             UsernamePasswordAuthenticationToken tok = new UsernamePasswordAuthenticationToken(username, password);
             Authentication authentication = authenticationManager.authenticate(tok);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//            System.out.println("Password loaded from DB: " + userDetails.getPassword());
+
 
             String AccessToken = jwtUtils.generateAccessToken(userDetails);
             String RefreshToken = jwtUtils.generateRefreshToken(userDetails);
@@ -92,10 +110,10 @@ public class AuthenticationService implements AutheticationInterface{
                     .build();
         }
         catch (BadCredentialsException e) {
-            throw new InvalidPasswordException("Invalid password");
+            throw new AuthenticationServiceException("invalid password",new  InvalidPasswordException());
         }
         catch (UsernameNotFoundException e) {
-            throw new UserNotFoundException("User not found");
+            throw new  AuthenticationServiceException("Username not found",new UserNotFoundException());
         }
     }
 
@@ -115,15 +133,20 @@ public class AuthenticationService implements AutheticationInterface{
 
     @Override
     public AuthenticationResponseDto refreshToken(String refreshToken) throws InvalidTokenException {
+
         if (!jwtUtils.validateJwtToken(refreshToken) || !jwtUtils.isRefreshToken(refreshToken)) {
-            throw new InvalidTokenException("Invalid refresh token");
+              throw new AuthenticationServiceException("Token is invalid",new InvalidTokenException());
         }
         if (tokenBlacklistService.isBlacklisted(refreshToken)) {
-            throw new InvalidTokenException("Token is blacklisted");
+            throw new AuthenticationServiceException("Token is blacklisted",new InvalidTokenException());
         }
         String username = jwtUtils.getUsernameFromJwtToken(refreshToken);
+        String storedRefreshToken = tokenService.getRefreshToken(username);
+        System.out.println("RefreshToken from request: " + refreshToken);
+        System.out.println("RefreshToken from Redis: " + storedRefreshToken);
+        System.out.println("Username from token: " + username);
         if (!tokenService.isRefreshTokenValid(username, refreshToken)) {
-            throw new InvalidTokenException("Token does not match stored token");
+            throw new AuthenticationServiceException("Token does not match stored token",new InvalidTokenException());
         }
 
         UserDetails userDetails=userDetailsManager.loadUserByUsername(username);

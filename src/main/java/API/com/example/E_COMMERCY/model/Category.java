@@ -1,9 +1,7 @@
 package API.com.example.E_COMMERCY.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +11,8 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Category {
     @Id
     @Column(name = "id")
@@ -38,38 +38,6 @@ public class Category {
 
     public Category(String name) {
         this.name = name;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Set<Product> products) {
-        this.products = products;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public void addProduct(Product product) {

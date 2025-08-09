@@ -7,19 +7,19 @@ import API.com.example.E_COMMERCY.dto.cart.request.DeleteCartItemRequestDto;
 import API.com.example.E_COMMERCY.dto.cart.request.UpdateCartItemRequestDto;
 import API.com.example.E_COMMERCY.dto.cartItem.CartItemMapper;
 import API.com.example.E_COMMERCY.dto.product.ProductMapper;
-import API.com.example.E_COMMERCY.exception.CartItemNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.CartItemNotFoundException;
 import API.com.example.E_COMMERCY.model.Cart;
 import API.com.example.E_COMMERCY.model.CartItem;
 import API.com.example.E_COMMERCY.model.Order;
 import API.com.example.E_COMMERCY.model.OrderItem;
 import API.com.example.E_COMMERCY.repository.CartItemRepository;
 import API.com.example.E_COMMERCY.repository.OrderRepository;
+import API.com.example.E_COMMERCY.repository.ProductRepository;
 import API.com.example.E_COMMERCY.service.deletion.DeletionService;
 import API.com.example.E_COMMERCY.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,19 +30,17 @@ public class CartService implements CartInterface {
 
     private final UserService userService;
     private final CartMapper cartMapper;
-    private final CartItemMapper cartItemMapper;
     private final CartItemRepository cartItemRepository;
-    private final ProductMapper productMapper;
+    private final ProductRepository productRepository;
     private final DeletionService deletionService;
     private final OrderRepository orderRepository;
 
     @Autowired
-    public CartService(UserService userService, CartMapper cartMapper, CartItemMapper cartItemMapper, CartItemRepository cartItemRepository, ProductMapper productMapper, DeletionService deletionService, OrderRepository orderRepository) {
+    public CartService(UserService userService, CartMapper cartMapper, CartItemRepository cartItemRepository, ProductRepository productRepository, DeletionService deletionService, OrderRepository orderRepository) {
         this.userService = userService;
         this.cartMapper = cartMapper;
-        this.cartItemMapper = cartItemMapper;
+        this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
-        this.productMapper = productMapper;
         this.deletionService = deletionService;
         this.orderRepository = orderRepository;
     }
@@ -68,10 +66,10 @@ public class CartService implements CartInterface {
         else{
             CartItem cartItem=CartItem.builder()
                     .Quantity(cartItemRequestDto.quantity)
-                    .product(productMapper
-                            .toEntity(cartItemRequestDto
-                                    .cartItemResponseDto
-                                    .getProductResponseDto()))
+                    .product(productRepository.findById(cartItemRequestDto
+                            .getCartItemResponseDto()
+                            .getProductResponseDto()
+                            .getId()).orElseThrow())
                     .cart(userService
                             .getCurrentUser(userService
                                     .getCurrentUsername())

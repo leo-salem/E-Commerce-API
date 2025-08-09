@@ -97,7 +97,7 @@ public class JwtUtils {
         long now = System.currentTimeMillis();
         long diffInMillis = expirationDate.getTime() - now;
 
-        return Math.max(diffInMillis / 1000, 0);
+        return Math.max(diffInMillis , 0);
     }
 
 

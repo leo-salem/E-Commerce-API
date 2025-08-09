@@ -1,6 +1,6 @@
 package API.com.example.E_COMMERCY.dto.product;
 
-import API.com.example.E_COMMERCY.dto.category.CategoryResponseDto;
+import API.com.example.E_COMMERCY.dto.slimDTOs.CategoryResponseSlimDto;
 import API.com.example.E_COMMERCY.dto.user.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +22,7 @@ public class ProductResponseDto {
 
     private String description;
 
-    private CategoryResponseDto categoryResponseDto;
+    private CategoryResponseSlimDto categoryResponseDto;
 
     private UserResponseDto userResponseDto;
 }

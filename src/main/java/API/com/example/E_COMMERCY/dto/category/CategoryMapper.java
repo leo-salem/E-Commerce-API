@@ -3,36 +3,46 @@ package API.com.example.E_COMMERCY.dto.category;
 
 import API.com.example.E_COMMERCY.dto.category.request.NewCategoryRequestDto;
 import API.com.example.E_COMMERCY.dto.product.ProductMapper;
+import API.com.example.E_COMMERCY.dto.slimDTOs.ProductResponseSlimDto;
 import API.com.example.E_COMMERCY.dto.user.UserMapper;
 import API.com.example.E_COMMERCY.model.Category;
+import API.com.example.E_COMMERCY.repository.ProductRepository;
+import API.com.example.E_COMMERCY.service.product.ProductService;
 import API.com.example.E_COMMERCY.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
+
 public class CategoryMapper {
 
-    private final @Lazy ProductMapper productMapper;
 
-    private final  UserMapper userMapper;
+    private final @Lazy UserMapper userMapper;
 
-    private final UserService userService;
+    private final @Lazy UserService userService;
+
+    private final @Lazy ProductRepository productRepository;
 
 
     public CategoryResponseDto toDto(Category category) {
         return CategoryResponseDto.builder()
                 .name(category.getName())
-                .id(category.getId())
+                .id((long) category.getId())
                 .productResponseDtoSet(
                         category.getProducts().
                                 stream()
-                                .map(productMapper::toDto)
+                                .map(product -> ProductResponseSlimDto.builder()
+                                        .id((long) product.getId())
+                                        .name(product.getName())
+                                        .price(product.getPrice())
+                                        .build())
                                 .collect(Collectors.toSet())
                 )
                 .userResponseDto(userMapper
@@ -41,25 +51,41 @@ public class CategoryMapper {
                                         .getCurrentUsername())))
                 .build();
     }
+
     public Category toEntity(NewCategoryRequestDto newCategoryRequestDto) {
+        Set<Long> IDs = newCategoryRequestDto
+                .getProductResponseDtoSet()
+                .stream()
+                .map(ProductResponseSlimDto::getId)
+                .collect(Collectors.toSet());
+
         return Category.builder()
                 .name(newCategoryRequestDto.getName())
-                .products(newCategoryRequestDto
-                        .getProductResponseDtoSet()
+                .products(IDs
                         .stream()
-                        .map(productMapper::toEntity)
+                        .map(productId -> productRepository.findById(productId)
+                                .orElseThrow(() -> new RuntimeException("Product not found with id " + productId)))
                         .collect(Collectors.toSet()))
                 .build();
     }
 
     public Category toEntity(CategoryResponseDto dto) {
+        Set<Long> IDs = dto
+                .getProductResponseDtoSet()
+                .stream()
+                .map(ProductResponseSlimDto::getId)
+                .collect(Collectors.toSet());
+
         return Category.builder()
-                .id(Math.toIntExact(dto.getId()))
+                .id(dto.getId().intValue())
                 .name(dto.getName())
-                .products(dto.getProductResponseDtoSet().stream()
-                        .map(productMapper::toEntity)
+                .products(IDs
+                        .stream()
+                        .map(productId -> productRepository.findById(productId)
+                                .orElseThrow(() -> new RuntimeException("Product not found with id " + productId)))
                         .collect(Collectors.toSet()))
                 .build();
     }
+
 
 }

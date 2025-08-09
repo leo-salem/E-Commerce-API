@@ -1,13 +1,20 @@
 package API.com.example.E_COMMERCY.security;
 
+import API.com.example.E_COMMERCY.model.User;
+import API.com.example.E_COMMERCY.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -25,11 +32,13 @@ public class SecurityConfig {
 
     private final AuthTokenFilter authTokenFilter;
     private final AuthEntryPointJwt unauthorizedHandler;
+    private final UserRepository userRepository;
 
     @Autowired
-    public SecurityConfig(AuthTokenFilter authTokenFilter, AuthEntryPointJwt unauthorizedEntryPoint) {
+    public SecurityConfig(AuthTokenFilter authTokenFilter, AuthEntryPointJwt unauthorizedEntryPoint, UserRepository userRepository) {
         this.authTokenFilter = authTokenFilter;
         this.unauthorizedHandler = unauthorizedEntryPoint;
+        this.userRepository = userRepository;
     }
 
     @Bean
@@ -38,7 +47,8 @@ public class SecurityConfig {
         jdbcUserDetailsManager.setUsersByUsernameQuery(
                 "select username, password, true as enabled from users where username=?");
         jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
-                "select username, hasRole as authority from users where username=?");
+                "select username, has_role as authority from users where username=?"
+                );
         return jdbcUserDetailsManager;
     }
 
@@ -49,9 +59,10 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/api/signin", "/api/signup", "/api/refresh-token").permitAll()
+                .requestMatchers("/api/Authentication/signup", "/api/Authentication/signin", "/api/Authentication/refresh").permitAll()
                 .anyRequest().authenticated()
         );
+        http.authenticationProvider(authenticationProvider());
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
         http.httpBasic(withDefaults());
 
@@ -64,6 +75,32 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+                return org.springframework.security.core.userdetails.User.builder()
+                        .username(user.getUsername())
+                        .password(user.getPassword())
+                        .roles(user.getHasRole().name())
+                        .build();
+            }
+        };
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

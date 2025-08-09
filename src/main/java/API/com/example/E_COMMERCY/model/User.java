@@ -24,7 +24,7 @@ public class User {
     @Column(name = "username", unique = true,nullable = false)
     private String username;
 
-    @Column(name = "hasRole",nullable = false)
+    @Column(name = "has_role",nullable = false)
     @Enumerated(EnumType.STRING)
     private Role hasRole;
 

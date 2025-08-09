@@ -2,9 +2,9 @@ package API.com.example.E_COMMERCY.service.product;
 
 import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
 import API.com.example.E_COMMERCY.dto.product.request.*;
-import API.com.example.E_COMMERCY.exception.CategoryNotFoundException;
-import API.com.example.E_COMMERCY.exception.ProductNameAlreadyExist;
-import API.com.example.E_COMMERCY.exception.ProductNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.CategoryNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.ProductNameAlreadyExist;
+import API.com.example.E_COMMERCY.exception.customExceptions.ProductNotFoundException;
 
 import java.util.List;
 

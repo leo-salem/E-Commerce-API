@@ -7,9 +7,9 @@ import API.com.example.E_COMMERCY.dto.category.request.ChangeCategoryProductsSet
 import API.com.example.E_COMMERCY.dto.category.request.NewCategoryRequestDto;
 import API.com.example.E_COMMERCY.dto.product.ProductMapper;
 import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
-import API.com.example.E_COMMERCY.exception.CategoryNameAlreadyExist;
-import API.com.example.E_COMMERCY.exception.CategoryNotFoundException;
-import API.com.example.E_COMMERCY.exception.ProductNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.CategoryNameAlreadyExist;
+import API.com.example.E_COMMERCY.exception.customExceptions.CategoryNotFoundException;
+import API.com.example.E_COMMERCY.exception.customExceptions.ProductNotFoundException;
 import API.com.example.E_COMMERCY.model.Category;
 import API.com.example.E_COMMERCY.model.Product;
 import API.com.example.E_COMMERCY.repository.CategoryRepository;

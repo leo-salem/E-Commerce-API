@@ -1,9 +1,7 @@
 package API.com.example.E_COMMERCY.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.*;
 
@@ -12,6 +10,8 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Order {
     @Id
     @Column(name = "id")
@@ -34,7 +34,7 @@ public class Order {
     @JoinColumn(name="UserId")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY,
+    @OneToMany(fetch = FetchType.EAGER,
             mappedBy = "order",cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     private Set<OrderItem> orderItems;
@@ -50,54 +50,6 @@ public class Order {
         this.PaymentMethod = PaymentMethod;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getPaymentMethod() {
-        return PaymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        PaymentMethod = paymentMethod;
-    }
-
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double amount) {
-        this.total = amount;
-    }
-
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Set<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(Set<OrderItem> orderItem) {
-        this.orderItems = orderItem;
-    }
 
     public void addOrdertem(OrderItem orderItem) {
         if (orderItems == null) {

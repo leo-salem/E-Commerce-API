@@ -7,6 +7,7 @@ import API.com.example.E_COMMERCY.model.Cart;
 import API.com.example.E_COMMERCY.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -15,12 +16,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CartMapper {
 
-    private CartItemMapper cartItemMapper;
-    private UserService userService;
+    private @Lazy CartItemMapper cartItemMapper;
+    private @Lazy UserService userService;
 
     public CartResponseDto toDto(Cart cart){
         return CartResponseDto.builder()
-                .id(cart.getId())
+                .id((long) cart.getId())
                 .cartItemResponseDtoSet(cart.getCartItems().stream().map(cartItemMapper::toDto)
                                        .collect(Collectors.toSet()))
                 .build();

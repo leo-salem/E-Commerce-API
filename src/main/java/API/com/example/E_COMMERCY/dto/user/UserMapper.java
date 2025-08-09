@@ -6,6 +6,7 @@ import API.com.example.E_COMMERCY.model.Cart;
 import API.com.example.E_COMMERCY.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     @Autowired
-    private final PasswordEncoder passwordEncoder;
+    private final @Lazy PasswordEncoder passwordEncoder;
 
     public UserResponseDto toDto(User user) {
         return UserResponseDto.builder()
@@ -31,8 +32,8 @@ public class UserMapper {
                 .firstName(userRequestDTO.getFirstName())
                 .lastName(userRequestDTO.getLastName())
                 .username(userRequestDTO.getUsername())
-                .password(passwordEncoder.encode(userRequestDTO.getPassword()))
-                .hasRole(Role.ROLE_USER)
+                .password(userRequestDTO.getPassword())
+                .hasRole(Role.USER)
                 .cart(new Cart())
                 .adress(userRequestDTO.getAdress())
                 .build();

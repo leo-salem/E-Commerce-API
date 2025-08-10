@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChangeNameRequestDto {
+public class NameRequestDto {
 
     @NotBlank
     String firstName;

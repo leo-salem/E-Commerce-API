@@ -14,10 +14,10 @@ public class DeleteUserRequestDto {
 
 
     @NotBlank
-    private String Password;
+    private String password;
 
 
     @NotBlank
-    private String ConfirmPassword;
+    private String confirmPassword;
 
 }

@@ -1,7 +1,7 @@
 package API.com.example.E_COMMERCY.service.user;
 
 import API.com.example.E_COMMERCY.dto.user.UserMapper;
-import API.com.example.E_COMMERCY.dto.user.request.ChangeNameRequestDto;
+import API.com.example.E_COMMERCY.dto.user.request.NameRequestDto;
 import API.com.example.E_COMMERCY.dto.user.request.ChangePasswordRequestDto;
 import API.com.example.E_COMMERCY.dto.user.request.DeleteUserRequestDto;
 import API.com.example.E_COMMERCY.dto.user.UserResponseDto;
@@ -24,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -70,16 +69,6 @@ public class UserService implements UserInterface{
     }
 
     @Override
-    public List<UserResponseDto> displayUserByName(String FirstName, String LastName) {
-        List<User> users = userRepository.findAllByFirstNameAndLastName(FirstName, LastName);
-        if (users.isEmpty()) {
-            throw new UserNotFoundException("No users found with name: " + FirstName + " " + LastName);
-        }
-        return users.stream().map(userMapper::toDto).toList();
-    }
-
-
-    @Override
     public UserResponseDto displayUserByUsername(String Username) {
         User user =userRepository.findByUsername(Username)
                 .orElseThrow(() -> new UserNotFoundException("No user found with username: " + Username));
@@ -117,7 +106,7 @@ public class UserService implements UserInterface{
     }
 
     @Override
-    public void ChangeName(ChangeNameRequestDto changeNameRequestDto) {
+    public void ChangeName(NameRequestDto changeNameRequestDto) {
         Optional<User> optionalUser = Optional.ofNullable(getCurrentUser(getCurrentUsername()));
         if (optionalUser.isEmpty()) {
             throw new UserNotFoundException("User not found");
@@ -132,14 +121,19 @@ public class UserService implements UserInterface{
     @Transactional
     @Override
     public void DeleteCurrentUser(DeleteUserRequestDto deleteUserRequestDto) {
-        Optional<User> optionalUser = Optional.ofNullable(getCurrentUser(getCurrentUsername()));
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
+        User user=getCurrentUser(getCurrentUsername());
 
-        User user = optionalUser.get();
-        if (!passwordEncoder.matches(deleteUserRequestDto.getPassword(), user.getPassword())) {
-            throw new InvalidPasswordException();
+
+        System.out.println("the current user password is "+user.getPassword());
+        System.out.println("the deleted user password is "+deleteUserRequestDto.getPassword());
+        System.out.println("the mastch is "+passwordEncoder.matches(deleteUserRequestDto.getConfirmPassword(), user.getPassword()) );
+
+
+        if (!deleteUserRequestDto.getPassword().equals(deleteUserRequestDto.getPassword())) {
+            throw new InvalidPasswordException("Password and ConfirmPassword do not match");
+        }
+        if (!passwordEncoder.matches(deleteUserRequestDto.getConfirmPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("Password is wrong");
         }
         String username = user.getUsername();
         String AccessToken = tokenService.getAccessToken(username);
@@ -176,7 +170,6 @@ public class UserService implements UserInterface{
             user.getProducts().clear();
         }
 
-        userDetailsManager.deleteUser(user.getUsername());
         userRepository.delete(user);
     }
 

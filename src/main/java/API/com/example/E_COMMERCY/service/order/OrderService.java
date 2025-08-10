@@ -3,6 +3,7 @@ package API.com.example.E_COMMERCY.service.order;
 import API.com.example.E_COMMERCY.dto.order.OrderMapper;
 import API.com.example.E_COMMERCY.dto.order.OrderResponseDto;
 import API.com.example.E_COMMERCY.exception.customExceptions.CartIsEmptyException;
+import API.com.example.E_COMMERCY.exception.customExceptions.CartItemNotFoundException;
 import API.com.example.E_COMMERCY.exception.customExceptions.OrderNotFoundException;
 import API.com.example.E_COMMERCY.model.Cart;
 import API.com.example.E_COMMERCY.model.Order;
@@ -51,7 +52,7 @@ public class OrderService implements OrderInterface{
     }
 
     @Override
-    public void MakeOrder() throws CartIsEmptyException {
+    public void MakeOrder() throws CartIsEmptyException, CartItemNotFoundException {
         Cart cart = userService.getCurrentUser(userService.getCurrentUsername()).getCart();
         if (cart.getCartItems().isEmpty()){
             throw new CartIsEmptyException("can't make order cause cart is empty");

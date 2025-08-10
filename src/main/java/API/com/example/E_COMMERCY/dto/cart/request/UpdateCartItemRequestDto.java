@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateCartItemRequestDto {
     @NotBlank
-    public CartItemResponseDto cartItemResponseDto;
+    public Long Id;
 
     @NotBlank
     public int quantity;

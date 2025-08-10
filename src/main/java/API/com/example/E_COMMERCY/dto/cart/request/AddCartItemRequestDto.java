@@ -1,7 +1,6 @@
 package API.com.example.E_COMMERCY.dto.cart.request;
 
-import API.com.example.E_COMMERCY.dto.cartItem.CartItemResponseDto;
-import jakarta.validation.constraints.NotBlank;
+import API.com.example.E_COMMERCY.dto.slimDTOs.ProductResponseSlimDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AddCartItemRequestDto {
 
-    @NotBlank
-    public CartItemResponseDto cartItemResponseDto;
+    private int quantity;
 
-    @NotBlank
-    public int quantity;
+    private ProductResponseSlimDto productResponseDto;
+
 }

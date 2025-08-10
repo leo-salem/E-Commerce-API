@@ -1,6 +1,7 @@
 package API.com.example.E_COMMERCY.dto.product.request;
 
 import API.com.example.E_COMMERCY.dto.category.CategoryResponseDto;
+import API.com.example.E_COMMERCY.dto.slimDTOs.CategoryResponseSlimDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -24,5 +25,5 @@ public class NewProductRequestDto {
     private String description;
 
     @NotBlank
-    private CategoryResponseDto categoryResponseDto;
+    private CategoryResponseSlimDto categoryResponseSlimDto;
 }

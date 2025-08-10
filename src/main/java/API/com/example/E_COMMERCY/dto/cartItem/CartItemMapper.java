@@ -3,13 +3,10 @@ package API.com.example.E_COMMERCY.dto.cartItem;
 
 import API.com.example.E_COMMERCY.dto.product.ProductMapper;
 import API.com.example.E_COMMERCY.dto.slimDTOs.ProductResponseSlimDto;
-import API.com.example.E_COMMERCY.model.Cart;
 import API.com.example.E_COMMERCY.model.CartItem;
 import API.com.example.E_COMMERCY.repository.ProductRepository;
-import API.com.example.E_COMMERCY.service.authentication.AuthenticationService;
 import API.com.example.E_COMMERCY.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 

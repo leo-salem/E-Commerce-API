@@ -3,10 +3,7 @@ package API.com.example.E_COMMERCY.service.cart;
 import API.com.example.E_COMMERCY.dto.cart.CartMapper;
 import API.com.example.E_COMMERCY.dto.cart.CartResponseDto;
 import API.com.example.E_COMMERCY.dto.cart.request.AddCartItemRequestDto;
-import API.com.example.E_COMMERCY.dto.cart.request.DeleteCartItemRequestDto;
 import API.com.example.E_COMMERCY.dto.cart.request.UpdateCartItemRequestDto;
-import API.com.example.E_COMMERCY.dto.cartItem.CartItemMapper;
-import API.com.example.E_COMMERCY.dto.product.ProductMapper;
 import API.com.example.E_COMMERCY.exception.customExceptions.CartItemNotFoundException;
 import API.com.example.E_COMMERCY.model.Cart;
 import API.com.example.E_COMMERCY.model.CartItem;
@@ -54,44 +51,62 @@ public class CartService implements CartInterface {
 
     @Override
     public void AddCartItem(AddCartItemRequestDto cartItemRequestDto) throws CartItemNotFoundException {
-        Cart cart = userService.getCurrentUser(userService.getCurrentUsername()).getCart();
+        System.out.println("===== DEBUG LOG =====");
+        System.out.println("Current username: " + userService.getCurrentUsername());
 
-        if (cartItemRepository.findById(cartItemRequestDto.cartItemResponseDto.getId()).isPresent()) {
-            UpdateCartItemRequestDto up =UpdateCartItemRequestDto.builder()
-                    .quantity(cartItemRequestDto.getQuantity())
-                    .cartItemResponseDto(cartItemRequestDto.getCartItemResponseDto())
-                    .build();
-             UpdateCartItem(up);
-        }
-        else{
-            CartItem cartItem=CartItem.builder()
-                    .Quantity(cartItemRequestDto.quantity)
-                    .product(productRepository.findById(cartItemRequestDto
-                            .getCartItemResponseDto()
-                            .getProductResponseDto()
-                            .getId()).orElseThrow())
-                    .cart(userService
-                            .getCurrentUser(userService
-                                    .getCurrentUsername())
-                            .getCart())
-                    .build();
-            cartItem.getCart().addCartItem(cartItem);
-            cartItem.getProduct().getCartItems().add(cartItem);
-            cartItemRepository.save(cartItem);
+        var currentUser = userService.getCurrentUser(userService.getCurrentUsername());
+        System.out.println("Current user object: " + currentUser.getId());
+
+        Cart cart = currentUser.getCart();
+        System.out.println("Current cart object: " + cart.getId());
+
+        System.out.println("Product ID from request: " + cartItemRequestDto.getProductResponseDto().getId());
+
+        var productOpt = productRepository.findById(cartItemRequestDto.getProductResponseDto().getId());
+        if (productOpt.isEmpty()) {
+            System.out.println(" Product not found in DB!");
+        } else {
+            System.out.println(" Product found: " + productOpt.get().getId());
         }
 
+        Set<CartItem> cartItems = cart.getCartItems();
+        for (CartItem cartItem : cartItems) {
+            Long IdProduct = (long) cartItem.getProduct().getId();
+            if (IdProduct.equals(cartItemRequestDto.getProductResponseDto().getId())) {
+                System.out.println("Product already in cart → updating quantity...");
+                UpdateCartItemRequestDto up = UpdateCartItemRequestDto.builder()
+                        .quantity(cartItemRequestDto.getQuantity())
+                        .Id((long) cartItem.getId())
+                        .build();
+                UpdateCartItem(up);
+                return;
+            }
+        }
+
+        CartItem cartItem = CartItem.builder()
+                .Quantity(cartItemRequestDto.getQuantity())
+                .product(productOpt.orElseThrow())
+                .cart(cart)
+                .build();
+        cartItem.getCart().addCartItem(cartItem);
+        cartItem.getProduct().getCartItems().add(cartItem);
+        cartItemRepository.save(cartItem);
+
+        System.out.println(" CartItem saved successfully.");
+        System.out.println("======================");
     }
+
 
     @Override
     public void UpdateCartItem(UpdateCartItemRequestDto cartItemRequestDto) throws CartItemNotFoundException {
-        CartItem cartItem = cartItemRepository.findById(cartItemRequestDto.cartItemResponseDto.getId())
+        CartItem cartItem = cartItemRepository.findById(cartItemRequestDto.getId())
                 .orElseThrow(() -> new CartItemNotFoundException("there is no cart item you need"));
-        cartItem.setQuantity(cartItemRequestDto.getQuantity());
+        cartItem.setQuantity(cartItemRequestDto.getQuantity()+cartItem.getQuantity());
         cartItemRepository.save(cartItem);
     }
 
     @Override
-    public void convertCartToOrder() {
+    public void convertCartToOrder() throws CartItemNotFoundException {
         Cart cart =userService.getCurrentUser(userService.getCurrentUsername()).getCart();
         Order order = new Order();
         order.setDate(new Date());
@@ -114,19 +129,22 @@ public class CartService implements CartInterface {
         order.setUser(userService.getCurrentUser(userService.getCurrentUsername()));
         order.getUser().getOrders().add(order);
         orderRepository.save(order);
+        ClearCart();
     }
 
     @Override
-    public void DeleteCartItem(DeleteCartItemRequestDto cartItemRequestDto) throws CartItemNotFoundException {
-        CartItem cartItem = cartItemRepository.findById(cartItemRequestDto.cartItemResponseDto.getId())
+    public void DeleteCartItem(Long Id) throws CartItemNotFoundException {
+        CartItem cartItem = cartItemRepository.findById(Id)
                 .orElseThrow(() -> new CartItemNotFoundException("there is no cart item you need"));
         deletionService.deleteCartItem(cartItem);
     }
 
     @Override
-    public void ClearCart() {
+    public void ClearCart() throws CartItemNotFoundException {
         Cart cart =userService.getCurrentUser(userService.getCurrentUsername()).getCart();
-        cart.getCartItems().forEach(deletionService::deleteCartItem);
+        for (CartItem cartItem : cart.getCartItems()){
+            DeleteCartItem((long) cartItem.getId());
+        }
     }
 
 }

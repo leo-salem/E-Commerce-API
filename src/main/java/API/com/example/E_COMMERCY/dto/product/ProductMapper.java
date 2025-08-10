@@ -42,7 +42,7 @@ public class ProductMapper {
         return Product.builder()
                 .name(newProductRequestDto.getName())
                 .price(newProductRequestDto.getPrice())
-                .category(categoryRepository.findById(newProductRequestDto.getCategoryResponseDto().getId())
+                .category(categoryRepository.findById(newProductRequestDto.getCategoryResponseSlimDto().getId())
                         .orElseThrow())
                 .description(newProductRequestDto.getDescription())
                 .user(userService.getCurrentUser(userService.getCurrentUsername()))

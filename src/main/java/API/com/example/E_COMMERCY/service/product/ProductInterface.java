@@ -17,7 +17,7 @@ public interface ProductInterface {
     public void UpdateProductName(ChangeProductNameRequestDto changeProductNameRequestDto) throws ProductNotFoundException;
     public void UpdateProductDescription(ChangeProductDescriptionDto changeProductDescriptionDto) throws ProductNotFoundException;
     public void UpdateProductPrice(ChangeProductPriceDto changeProductPriceDto) throws ProductNotFoundException;
-    public void UpdateProductCategory(ChangeProductCategoryRequest changeProductCategoryRequest) throws ProductNotFoundException, CategoryNotFoundException;
+    public void UpdateProductCategory(ChangeProductCategoryRequestDto changeProductCategoryRequest) throws ProductNotFoundException, CategoryNotFoundException;
     public void DeleteProductByName(String name) throws ProductNotFoundException;
 
 }

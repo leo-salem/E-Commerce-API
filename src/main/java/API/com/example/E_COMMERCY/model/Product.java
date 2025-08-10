@@ -1,5 +1,6 @@
 package API.com.example.E_COMMERCY.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,11 +8,11 @@ import java.util.Set;
 
 @Entity
 @Table(name="product")
-@Data
-@AllArgsConstructor
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Product {
     @Id
     @Column(name = "id")
@@ -31,6 +32,7 @@ public class Product {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="CategoryId")
+    @JsonBackReference
     private Category category;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
@@ -49,10 +51,6 @@ public class Product {
     private User user;
 
 
-
-    public Product() {
-
-    }
     public Product( String name, double price, String description) {
         this.name = name;
         this.price = price;

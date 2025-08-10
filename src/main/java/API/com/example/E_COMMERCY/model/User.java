@@ -1,6 +1,7 @@
 package API.com.example.E_COMMERCY.model;
 
 import API.com.example.E_COMMERCY.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,11 +10,12 @@ import java.util.Set;
 
 @Entity
 @Table(name="users")
-@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 @Setter
+@ToString(exclude = {"orders", "products", "categories", "cart"})
 public class User {
 
     @Id
@@ -43,36 +45,35 @@ public class User {
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "CartId")
+    @JsonIgnore
     private Cart cart;
 
     @OneToMany(mappedBy = "user",
-             fetch = FetchType.LAZY,   //EAGER temporarly until i reach it
+            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonIgnore
     private Set<Order> orders;
 
     @OneToMany(mappedBy = "user",
-            fetch = FetchType.LAZY,   //EAGER temporarly until i reach it
+            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonIgnore
     private Set<Product> products;
 
     @OneToMany(mappedBy = "user",
-            fetch = FetchType.LAZY,   //EAGER temporarly until i reach it
+            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonIgnore
     private Set<Category>categories;
-
-    public User() {
-
-    }
 
     public User(String username, String password, String adress) {
         this.username = username;
         this.password = password;
         this.adress = adress;
     }
-
 
     public void addProduct(Product product) {
         if (products == null) {
@@ -88,15 +89,5 @@ public class User {
         }
         categories.add(category);
         category.setUser(this);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", adress='" + adress + '\'' +
-                ", password='" + password + '\'' +
-                '}';
     }
 }

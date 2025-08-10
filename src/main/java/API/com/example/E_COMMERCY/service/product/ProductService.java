@@ -67,7 +67,6 @@ public class ProductService implements ProductInterface{
         Product product = productMapper.toEntity(newProductRequestDto);
         product.getCategory().getProducts().add(product);
         categoryRepository.save(product.getCategory());
-        productRepository.save(product);
     }
 
     @Override
@@ -98,12 +97,12 @@ public class ProductService implements ProductInterface{
     }
 
     @Override
-    public void UpdateProductCategory(ChangeProductCategoryRequest changeProductCategoryRequest) throws ProductNotFoundException, CategoryNotFoundException {
+    public void UpdateProductCategory(ChangeProductCategoryRequestDto changeProductCategoryRequest) throws ProductNotFoundException, CategoryNotFoundException {
         String productName= changeProductCategoryRequest.getName();
         Product product = productRepository.findByName(productName)
                 .orElseThrow (() -> new ProductNotFoundException("No Product found with name: " + productName));
         String categoryName=changeProductCategoryRequest
-                        .getCategoryResponseDto()
+                        .getCategoryResponseSlimDto()
                         .getName();
 
         Category category=categoryRepository.findByName(categoryName)
@@ -111,7 +110,6 @@ public class ProductService implements ProductInterface{
         product.setCategory(category);
         category.getProducts().add(product);
         categoryRepository.save(category);
-        productRepository.save(product);
     }
 
     @Override

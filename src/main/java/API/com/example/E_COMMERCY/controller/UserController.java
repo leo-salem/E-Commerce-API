@@ -26,30 +26,30 @@ public class UserController {
     }
 
     @GetMapping("/user/TheId/{id}")
-    public ResponseEntity<?> displayByTheId(@PathVariable Long id){
+    public ResponseEntity<?> displayByTheId(@PathVariable @Valid Long id){
         UserResponseDto userResponseDto=userService.displayUserById(id);
         return ResponseEntity.ok().body(userResponseDto);
     }
 
     @GetMapping("/user/TheUsername/{username}")
-    public ResponseEntity<?> displayByTheUsername(@PathVariable String username){
+    public ResponseEntity<?> displayByTheUsername(@PathVariable @Valid String username){
         UserResponseDto userResponseDto=userService.displayUserByUsername(username);
         return ResponseEntity.ok().body(userResponseDto);
     }
 
-    @PostMapping("/user/changeTheName")
+    @PatchMapping("/user/changeTheName")
     public ResponseEntity<?> ChangeTheName(@RequestBody @Valid NameRequestDto nameRequestDto){
         userService.ChangeName(nameRequestDto);
         return ResponseEntity.ok("name changed successfully");
     }
 
-    @PostMapping("/user/changeThePassword")
+    @PatchMapping("/user/changeThePassword")
     public ResponseEntity<?> ChangeThePassword(@RequestBody @Valid ChangePasswordRequestDto passwordRequestDto){
         userService.ChangePassword(passwordRequestDto);
         return ResponseEntity.ok("password changed successfully");
     }
 
-    @PostMapping("/user/delete")
+    @DeleteMapping("/user/delete")
     public ResponseEntity<?> deleteTheUser(@RequestBody @Valid DeleteUserRequestDto deleteUserRequestDto){
        // try {
             userService.DeleteCurrentUser(deleteUserRequestDto);

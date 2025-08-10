@@ -15,7 +15,7 @@ public interface CategoryInterface {
     public CategoryResponseDto displayCategoryByName(String name) throws CategoryNotFoundException;
     public List<CategoryResponseDto> displayAllCategories() throws CategoryNotFoundException;
     public void AddCategory (NewCategoryRequestDto newCategory) throws CategoryNotFoundException, CategoryNameAlreadyExist;
-    public void UpdateCategoryName(ChangeCategoryNameRequestDto changeCategoryNameRequestDto) throws CategoryNotFoundException;
+    public void UpdateCategoryName(ChangeCategoryNameRequestDto categoryName) throws CategoryNotFoundException;
     public void UpdateCategoryProducts(ChangeCategoryProductsSetRequestDto changeCategoryProductsSetRequestDto) throws CategoryNotFoundException, ProductNotFoundException;
     public void DeleteCategory(String name) throws CategoryNotFoundException;
 }

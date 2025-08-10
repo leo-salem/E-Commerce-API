@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -60,6 +61,18 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/Authentication/signup", "/api/Authentication/signin", "/api/Authentication/refresh").permitAll()
+
+                .requestMatchers(HttpMethod.POST, "/api/CategorySection/category/Add").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/CategorySection/category/update/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/CategorySection/category/update/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/CategorySection/category/delete/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/CategorySection/**").hasAnyRole("ADMIN", "USER")
+
+                .requestMatchers(HttpMethod.POST, "/api/ProductSection/product/Add").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/ProductSection/product/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/ProductSection/product/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/ProductSection/product/delete/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/ProductSection/**").hasAnyRole("ADMIN", "USER")
                 .anyRequest().authenticated()
         );
         http.authenticationProvider(authenticationProvider());

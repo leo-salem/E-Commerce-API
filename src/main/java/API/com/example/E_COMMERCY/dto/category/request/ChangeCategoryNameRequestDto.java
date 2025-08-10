@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChangeCategoryNameRequestDto {
     @NotBlank
-    private String name;
+    private String oldName;
 
+    @NotBlank
+    private String NewName;
 }

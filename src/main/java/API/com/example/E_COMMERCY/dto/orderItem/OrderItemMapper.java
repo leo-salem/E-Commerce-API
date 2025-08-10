@@ -18,7 +18,7 @@ public class OrderItemMapper {
     public OrderItemResponseDto toDto(OrderItem orderItem){
         return OrderItemResponseDto.builder()
                 .productResponseDto(productMapper.toDto(orderItem.getProduct()))
-                .id(orderItem.getId())
+                .id((long) orderItem.getId())
                 .Quantity(orderItem.getQuantity())
                 .build();
     }

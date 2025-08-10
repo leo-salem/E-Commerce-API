@@ -1,5 +1,6 @@
 package API.com.example.E_COMMERCY.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,11 +9,11 @@ import java.util.Set;
 
 @Entity
 @Table(name="Category")
-@Data
-@AllArgsConstructor
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Category {
     @Id
     @Column(name = "id")
@@ -26,6 +27,7 @@ public class Category {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonManagedReference
     private Set<Product> products;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
@@ -33,8 +35,6 @@ public class Category {
     @JoinColumn(name="UserId")
     private User user;
 
-    public Category() {
-    }
 
     public Category(String name) {
         this.name = name;

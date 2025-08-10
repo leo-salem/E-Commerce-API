@@ -2,6 +2,7 @@ package API.com.example.E_COMMERCY.dto.category.request;
 
 
 import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
+import API.com.example.E_COMMERCY.dto.slimDTOs.ProductResponseSlimDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,6 @@ public class ChangeCategoryProductsSetRequestDto {
     private String name;
 
     @NotBlank
-    private Set<ProductResponseDto> productResponseDtoSet;
+    private Set<ProductResponseSlimDto> productResponseSlimDtos;
 
 }

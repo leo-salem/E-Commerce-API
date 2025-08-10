@@ -1,15 +1,17 @@
 package API.com.example.E_COMMERCY.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "cartitem")
-@Data
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@ToString(exclude = {"product", "cart"})
 public class CartItem {
 
     @Id
@@ -20,32 +22,17 @@ public class CartItem {
     @Column(name = "Quantity",nullable = false)
     private int Quantity;
 
-
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "ProductId", nullable = false)
+    @JsonIgnore
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "CartId", nullable = false)
+    @JsonIgnore
     private Cart cart;
-
-
-    public CartItem() {
-    }
-
-    public CartItem( int Quantity) {
-        this.Quantity = Quantity;
-    }
-
-    @Override
-    public String toString() {
-        return "CartItem{" +
-                "id=" + id +
-                ", Quantity=" + Quantity +
-                '}';
-    }
 }

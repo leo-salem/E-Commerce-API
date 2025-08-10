@@ -1,5 +1,6 @@
 package API.com.example.E_COMMERCY.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,11 +8,12 @@ import java.util.*;
 
 @Table(name = "orders")
 @Entity
-@Data
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@ToString(exclude = {"user", "orderItems"})
 public class Order {
     @Id
     @Column(name = "id")
@@ -28,28 +30,23 @@ public class Order {
     @Column(name = "PaymentMethod",nullable = false)
     private String PaymentMethod;
 
-
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="UserId")
+    @JsonIgnore
     private User user;
 
     @OneToMany(fetch = FetchType.EAGER,
             mappedBy = "order",cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonIgnore
     private Set<OrderItem> orderItems;
-
-
-    public Order() {
-
-    }
 
     public Order(Date date, double total, String PaymentMethod) {
         this.date = date;
         this.total = total;
         this.PaymentMethod = PaymentMethod;
     }
-
 
     public void addOrdertem(OrderItem orderItem) {
         if (orderItems == null) {

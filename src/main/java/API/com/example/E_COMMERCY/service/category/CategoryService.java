@@ -7,6 +7,7 @@ import API.com.example.E_COMMERCY.dto.category.request.ChangeCategoryProductsSet
 import API.com.example.E_COMMERCY.dto.category.request.NewCategoryRequestDto;
 import API.com.example.E_COMMERCY.dto.product.ProductMapper;
 import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
+import API.com.example.E_COMMERCY.dto.slimDTOs.ProductResponseSlimDto;
 import API.com.example.E_COMMERCY.exception.customExceptions.CategoryNameAlreadyExist;
 import API.com.example.E_COMMERCY.exception.customExceptions.CategoryNotFoundException;
 import API.com.example.E_COMMERCY.exception.customExceptions.ProductNotFoundException;
@@ -41,7 +42,7 @@ public class CategoryService implements CategoryInterface {
     @Override
     public CategoryResponseDto displayCategoryById(Long id) throws CategoryNotFoundException {
         Category category= categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException(id));
+                .orElseThrow(() -> new CategoryNotFoundException("no category found with this id :"+id));
         return categoryMapper.toDto(category);
     }
 
@@ -68,20 +69,21 @@ public class CategoryService implements CategoryInterface {
             throw new CategoryNameAlreadyExist("this name "+categoryName+" Already Exist");
         }
         Category category=categoryMapper.toEntity(newCategory);
+       /*
         Set<Product>products =category.getProducts();
         for (Product product : products){
             product.setCategory(category);
             productRepository.save(product);
         }
+        */
         categoryRepository.save(category);
     }
 
     @Override
-    public void UpdateCategoryName(ChangeCategoryNameRequestDto changeCategoryNameRequestDto) throws CategoryNotFoundException {
-        String categoryName = changeCategoryNameRequestDto.getName();
-        Category category=categoryRepository.findByName(categoryName)
+    public void UpdateCategoryName(ChangeCategoryNameRequestDto categoryName) throws CategoryNotFoundException {
+        Category category=categoryRepository.findByName(categoryName.getOldName())
                 .orElseThrow (() -> new CategoryNotFoundException("No Category found with name: " + categoryName));
-        category.setName(categoryName);
+        category.setName(categoryName.getNewName());
         categoryRepository.save(category);
     }
 
@@ -90,9 +92,9 @@ public class CategoryService implements CategoryInterface {
         String categoryName = changeCategoryProductsSetRequestDto.getName();
         Category category=categoryRepository.findByName(categoryName)
                 .orElseThrow (() -> new CategoryNotFoundException("No Category found with name: " + categoryName));
-        Set<ProductResponseDto> productResponseDtoSet=
-                changeCategoryProductsSetRequestDto.getProductResponseDtoSet();
-        for (ProductResponseDto productResponseDto : productResponseDtoSet) {
+        Set<ProductResponseSlimDto> productResponseDtoSet=
+                changeCategoryProductsSetRequestDto.getProductResponseSlimDtos();
+        for (ProductResponseSlimDto productResponseDto : productResponseDtoSet) {
             String productName = productResponseDto.getName();
             if (!productRepository.findByName(productName).isPresent()) {
                 throw new ProductNotFoundException("No Product found with name: " + productName);
@@ -114,7 +116,6 @@ public class CategoryService implements CategoryInterface {
         category.setProducts(products);
         for (Product product : products){
             product.setCategory(category);
-            productRepository.save(product);
         }
         categoryRepository.save(category);
     }

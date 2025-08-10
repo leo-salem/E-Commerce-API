@@ -1,15 +1,17 @@
 package API.com.example.E_COMMERCY.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "orderitem")
-@Data
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@ToString(exclude = {"product", "order"})
 public class OrderItem {
 
     @Id
@@ -24,30 +26,13 @@ public class OrderItem {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "product_id", nullable = false)
+    @JsonIgnore
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonIgnore
     private Order order;
-
-    public OrderItem() {
-    }
-
-    public OrderItem(int Quantity) {
-        this.Quantity = Quantity;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderItem{" +
-                "id=" + id +
-                ", Quantity=" + Quantity +
-                '}';
-    }
 }

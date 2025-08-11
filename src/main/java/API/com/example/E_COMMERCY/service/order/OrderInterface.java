@@ -11,6 +11,6 @@ import java.util.List;
 public interface OrderInterface {
     OrderResponseDto DisplayOrderById(Long id) throws OrderNotFoundException;
     List<OrderResponseDto> DisplayCurrentUserOrders();
-    void MakeOrder() throws CartIsEmptyException, CartItemNotFoundException;
+    OrderResponseDto MakeOrder() throws CartIsEmptyException, CartItemNotFoundException;
     void DeleteOrderById(Long id) throws OrderNotFoundException, AccessDeniedException;
 }

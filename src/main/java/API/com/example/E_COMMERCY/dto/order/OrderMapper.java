@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class OrderMapper {
 
+    @Autowired
     private final @Lazy OrderItemMapper orderItemMapper;
 
     public OrderResponseDto toDto(Order order){

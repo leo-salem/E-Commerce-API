@@ -1,6 +1,8 @@
 package API.com.example.E_COMMERCY;
 
+import API.com.example.E_COMMERCY.model.Order;
 import API.com.example.E_COMMERCY.model.User;
+import API.com.example.E_COMMERCY.repository.OrderRepository;
 import API.com.example.E_COMMERCY.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -35,7 +37,6 @@ public class ECommercyApplication {
 			} else {
 				System.out.println(" Admin user already exists.");
 			}
-
 		};
 	}
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class OrderItemMapper {
 
 
+    @Autowired
     private final @Lazy ProductMapper  productMapper;
 
     public OrderItemResponseDto toDto(OrderItem orderItem){

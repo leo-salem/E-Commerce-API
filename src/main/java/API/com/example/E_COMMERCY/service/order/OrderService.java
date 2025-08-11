@@ -52,13 +52,19 @@ public class OrderService implements OrderInterface{
     }
 
     @Override
-    public void MakeOrder() throws CartIsEmptyException, CartItemNotFoundException {
+    public OrderResponseDto MakeOrder() throws CartIsEmptyException, CartItemNotFoundException {
         Cart cart = userService.getCurrentUser(userService.getCurrentUsername()).getCart();
         if (cart.getCartItems().isEmpty()){
             throw new CartIsEmptyException("can't make order cause cart is empty");
         }
-        cartService.convertCartToOrder();
+        try {
+            return cartService.convertCartToOrder();
+        } catch (Exception e) {
+            e.printStackTrace();  // اطبع الاستثناء في اللوق
+            throw e;  // أعد رمي الاستثناء ليصل للكونترولر
+        }
     }
+
 
     @Override
     public void DeleteOrderById(Long id) throws OrderNotFoundException, AccessDeniedException {

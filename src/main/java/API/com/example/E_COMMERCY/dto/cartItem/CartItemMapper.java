@@ -7,6 +7,7 @@ import API.com.example.E_COMMERCY.model.CartItem;
 import API.com.example.E_COMMERCY.repository.ProductRepository;
 import API.com.example.E_COMMERCY.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +16,19 @@ import org.springframework.stereotype.Component;
 
 public class CartItemMapper {
 
+    @Autowired
     private final @Lazy ProductMapper productMapper;
+    @Autowired
     private final @Lazy UserService userService;
+    @Autowired
     private final @Lazy ProductRepository productRepository;
 
     public CartItemResponseDto toDto(CartItem cartItem){
+        System.out.println("CartItemMapper-> in it");
+        if(cartItem.getProduct() == null){
+            System.out.println("cartItem.getProduct == null");
+            return null;
+        }
         return CartItemResponseDto.builder()
                 .id((long) cartItem.getId())
                 .quantity(cartItem.getQuantity())

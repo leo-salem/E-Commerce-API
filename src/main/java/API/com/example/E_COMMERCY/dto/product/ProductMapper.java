@@ -8,6 +8,7 @@ import API.com.example.E_COMMERCY.model.Product;
 import API.com.example.E_COMMERCY.repository.CategoryRepository;
 import API.com.example.E_COMMERCY.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +17,13 @@ import org.springframework.stereotype.Component;
 
 public class ProductMapper {
 
+    @Autowired
     private final @Lazy UserMapper userMapper;
 
+    @Autowired
     private final @Lazy UserService userService;
 
+    @Autowired
     private final @Lazy  CategoryRepository categoryRepository;
 
 

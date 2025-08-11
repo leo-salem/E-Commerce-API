@@ -22,11 +22,14 @@ public class DeletionService implements DeletionInterface{
             if (product != null) {
                 product.getOrderitems().remove(orderItem);
             }
-            orderItem.setOrder(null);
-            orderItem.setProduct(null);
+            em.remove(em.contains(orderItem) ? orderItem : em.merge(orderItem));
         }
         order.getOrderItems().clear();
-        order.setUser(null);
+        if (order.getUser() != null) {
+            order.getUser().getOrders().remove(order);
+            order.setUser(null);
+        }
+        em.flush();
         em.remove(em.contains(order) ? order : em.merge(order));
     }
 

@@ -4,16 +4,17 @@ import API.com.example.E_COMMERCY.dto.cart.CartMapper;
 import API.com.example.E_COMMERCY.dto.cart.CartResponseDto;
 import API.com.example.E_COMMERCY.dto.cart.request.AddCartItemRequestDto;
 import API.com.example.E_COMMERCY.dto.cart.request.UpdateCartItemRequestDto;
+import API.com.example.E_COMMERCY.dto.order.OrderMapper;
+import API.com.example.E_COMMERCY.dto.order.OrderResponseDto;
 import API.com.example.E_COMMERCY.exception.customExceptions.CartItemNotFoundException;
-import API.com.example.E_COMMERCY.model.Cart;
-import API.com.example.E_COMMERCY.model.CartItem;
-import API.com.example.E_COMMERCY.model.Order;
-import API.com.example.E_COMMERCY.model.OrderItem;
+import API.com.example.E_COMMERCY.model.*;
 import API.com.example.E_COMMERCY.repository.CartItemRepository;
 import API.com.example.E_COMMERCY.repository.OrderRepository;
 import API.com.example.E_COMMERCY.repository.ProductRepository;
+import API.com.example.E_COMMERCY.repository.UserRepository;
 import API.com.example.E_COMMERCY.service.deletion.DeletionService;
 import API.com.example.E_COMMERCY.service.user.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,21 +32,35 @@ public class CartService implements CartInterface {
     private final ProductRepository productRepository;
     private final DeletionService deletionService;
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
     @Autowired
-    public CartService(UserService userService, CartMapper cartMapper, CartItemRepository cartItemRepository, ProductRepository productRepository, DeletionService deletionService, OrderRepository orderRepository) {
+    public CartService(UserService userService, CartMapper cartMapper,
+                       CartItemRepository cartItemRepository,
+                       ProductRepository productRepository,
+                       DeletionService deletionService,
+                       UserRepository userRepository, OrderRepository orderRepository,
+                       OrderMapper orderMapper) {
         this.userService = userService;
         this.cartMapper = cartMapper;
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
         this.deletionService = deletionService;
         this.orderRepository = orderRepository;
+        this.orderMapper = orderMapper;
     }
 
 
     @Override
     public CartResponseDto displayCart() {
-        Cart cart = userService.getCurrentUser(userService.getCurrentUsername()).getCart();
+        System.out.println("===== DEBUG LOG =====");
+        System.out.println("Current username: " + userService.getCurrentUsername());
+
+        var currentUser = userService.getCurrentUser(userService.getCurrentUsername());
+        System.out.println("Current user object: " + currentUser.getId());
+
+        Cart cart = currentUser.getCart();
+        System.out.println("Current cart object: " + cart.getId());
         return cartMapper.toDto(cart);
     }
 
@@ -106,31 +121,73 @@ public class CartService implements CartInterface {
     }
 
     @Override
-    public void convertCartToOrder() throws CartItemNotFoundException {
-        Cart cart =userService.getCurrentUser(userService.getCurrentUsername()).getCart();
-        Order order = new Order();
-        order.setDate(new Date());
-        order.setPaymentMethod("visa");
-        order.setUser(userService.getCurrentUser(userService.getCurrentUsername()));
-        Set<OrderItem> orderItems = new HashSet<>();
+    @Transactional
+    public OrderResponseDto convertCartToOrder() throws CartItemNotFoundException {
+        User currentUser = userService.getCurrentUser(userService.getCurrentUsername());
+        Cart cart = currentUser.getCart();
+
+        System.out.println("Current User: " + currentUser);
+        System.out.println("Cart: " + cart);
+        if (cart == null || cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
+            throw new CartItemNotFoundException("Cart is empty or not found");
+        }
+
+        Order order = Order.builder()
+                .date(new Date())
+                .PaymentMethod("visa")
+                .user(currentUser)
+                .orderItems(new HashSet<>())
+                .total(0.0)
+                .build();
+
         double totalPrice = 0;
 
-        for (CartItem item : cart.getCartItems()) {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(item.getProduct());
-            orderItem.setQuantity(item.getQuantity());
-            orderItem.setOrder(order);
-            orderItem.getProduct().getOrderitems().add(orderItem);
-            totalPrice +=  item.getProduct().getPrice()* item.getQuantity();
-            orderItems.add(orderItem);
+        // build order items and link both sides
+        for (CartItem item : new HashSet<>(cart.getCartItems())) { // iterate on copy to be safe
+            System.out.println("Processing CartItem: " + item);
+            double itemTotal = item.getProduct().getPrice() * item.getQuantity();
+            totalPrice += itemTotal;
+
+            OrderItem orderItem = OrderItem.builder()
+                    .product(item.getProduct())
+                    .Quantity(item.getQuantity())   // لاحظ اسم الحقل عندك كبير Q
+                    .order(order)
+                    .build();
+
+            // add to order using helper (sets both sides)
+            order.addOrdertem(orderItem);
+
+            // optional: keep product relation consistent
+            if (item.getProduct().getOrderitems() == null) {
+                item.getProduct().setOrderitems(new HashSet<>());
+            }
+            item.getProduct().getOrderitems().add(orderItem);
+
+            System.out.println("OrderItem built (temp): " + orderItem);
         }
-        order.setOrderItems(orderItems);
+
         order.setTotal(totalPrice);
-        order.setUser(userService.getCurrentUser(userService.getCurrentUsername()));
-        order.getUser().getOrders().add(order);
-        orderRepository.save(order);
+        System.out.println("Order prepared, total = " + totalPrice);
+
+        // **Important**: save the order (so DB will generate IDs for order and orderItems)
+        Order savedOrder = orderRepository.save(order);
+        // if you want to be 100% sure the INSERT happened now:
+        // entityManager.flush();
+
+        System.out.println("Saved order id = " + savedOrder.getId());
+        savedOrder.getOrderItems().forEach(oi ->
+                System.out.println("Saved orderItem id = " + oi.getId() + " for product " + oi.getProduct().getId())
+        );
+
         ClearCart();
+        System.out.println("Cart cleared");
+
+        // map the SAVED order to DTO (this will have real ids)
+        OrderResponseDto response = orderMapper.toDto(savedOrder);
+        System.out.println("Returning DTO for order id = " + savedOrder.getId());
+        return response;
     }
+
 
     @Override
     public void DeleteCartItem(Long Id) throws CartItemNotFoundException {
@@ -141,10 +198,15 @@ public class CartService implements CartInterface {
 
     @Override
     public void ClearCart() throws CartItemNotFoundException {
-        Cart cart =userService.getCurrentUser(userService.getCurrentUsername()).getCart();
-        for (CartItem cartItem : cart.getCartItems()){
+        Cart cart = userService.getCurrentUser(userService.getCurrentUsername()).getCart();
+
+        // نعمل نسخة مستقلة من العناصر
+        Set<CartItem> itemsCopy = new HashSet<>(cart.getCartItems());
+
+        for (CartItem cartItem : itemsCopy) {
             DeleteCartItem((long) cartItem.getId());
         }
     }
+
 
 }

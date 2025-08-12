@@ -60,8 +60,10 @@ public class OrderService implements OrderInterface{
         try {
             return cartService.convertCartToOrder();
         } catch (Exception e) {
-            e.printStackTrace();  // اطبع الاستثناء في اللوق
-            throw e;  // أعد رمي الاستثناء ليصل للكونترولر
+            System.out.println("=========DEBUG LOG=======");
+            System.out.println("Error making order");
+            e.printStackTrace();
+            throw e;
         }
     }
 

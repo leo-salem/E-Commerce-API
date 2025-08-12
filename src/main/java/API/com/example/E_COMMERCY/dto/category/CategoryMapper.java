@@ -53,21 +53,8 @@ public class CategoryMapper {
     }
 
     public Category toEntity(NewCategoryRequestDto newCategoryRequestDto) {
-     /*
-        Set<Long> IDs = newCategoryRequestDto
-                .getProductResponseDtoSet()
-                .stream()
-                .map(ProductResponseSlimDto::getId)
-                .collect(Collectors.toSet());
-*/
         return Category.builder()
                 .name(newCategoryRequestDto.getName())
-          /*      .products(IDs
-                        .stream()
-                        .map(productId -> productRepository.findById(productId)
-                                .orElseThrow(() -> new RuntimeException("Product not found with id " + productId)))
-                        .collect(Collectors.toSet()))
-           */
                 .build();
     }
 

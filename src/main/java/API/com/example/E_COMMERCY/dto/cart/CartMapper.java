@@ -23,12 +23,16 @@ public class CartMapper {
     private @Lazy UserService userService;
 
     public CartResponseDto toDto(Cart cart){
+
+        System.out.println("===========DEBUG LOG=========");
         for (CartItem cartItem : cart.getCartItems()){
             System.out.println("CartItem quantity: " + cartItem.getQuantity());
             System.out.println("CartItem id: " + cartItem.getId());
             System.out.println("cartItemProductID : "+ cartItem.getProduct().getId());
         }
         System.out.println("------------------------------");
+
+
         return CartResponseDto.builder()
                 .id((long) cart.getId())
                 .cartItemResponseDtoSet(cart.getCartItems().stream().map(cartItemMapper::toDto)

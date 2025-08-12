@@ -70,6 +70,7 @@ public class AuthenticationService implements AutheticationInterface{
         }
         User user = userMapper.toEntity(registerRequestDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        System.out.println("===========DEBUG LOG=========");
         System.out.println("Encoded password at register: " + user.getPassword());
         userRepository.save(user);
     }
@@ -95,7 +96,8 @@ public class AuthenticationService implements AutheticationInterface{
             UsernamePasswordAuthenticationToken tok = new UsernamePasswordAuthenticationToken(username, password);
             Authentication authentication = authenticationManager.authenticate(tok);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//            System.out.println("Password loaded from DB: " + userDetails.getPassword());
+            System.out.println("===========DEBUG LOG=========");
+            System.out.println("Password loaded from DB: " + userDetails.getPassword());
 
 
             String AccessToken = jwtUtils.generateAccessToken(userDetails);
@@ -142,6 +144,7 @@ public class AuthenticationService implements AutheticationInterface{
         }
         String username = jwtUtils.getUsernameFromJwtToken(refreshToken);
         String storedRefreshToken = tokenService.getRefreshToken(username);
+        System.out.println("===========DEBUG LOG=========");
         System.out.println("RefreshToken from request: " + refreshToken);
         System.out.println("RefreshToken from Redis: " + storedRefreshToken);
         System.out.println("Username from token: " + username);

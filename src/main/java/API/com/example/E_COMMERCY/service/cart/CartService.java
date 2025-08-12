@@ -126,6 +126,7 @@ public class CartService implements CartInterface {
         User currentUser = userService.getCurrentUser(userService.getCurrentUsername());
         Cart cart = currentUser.getCart();
 
+        System.out.println("===========DEBUG LOG=========");
         System.out.println("Current User: " + currentUser);
         System.out.println("Cart: " + cart);
         if (cart == null || cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
@@ -150,14 +151,12 @@ public class CartService implements CartInterface {
 
             OrderItem orderItem = OrderItem.builder()
                     .product(item.getProduct())
-                    .Quantity(item.getQuantity())   // لاحظ اسم الحقل عندك كبير Q
+                    .Quantity(item.getQuantity())
                     .order(order)
                     .build();
 
-            // add to order using helper (sets both sides)
             order.addOrdertem(orderItem);
 
-            // optional: keep product relation consistent
             if (item.getProduct().getOrderitems() == null) {
                 item.getProduct().setOrderitems(new HashSet<>());
             }
@@ -169,11 +168,13 @@ public class CartService implements CartInterface {
         order.setTotal(totalPrice);
         System.out.println("Order prepared, total = " + totalPrice);
 
-        // **Important**: save the order (so DB will generate IDs for order and orderItems)
+        // **Important**: save the order
+        // (so DB will generate IDs for order and orderItems and save them and save the user cause cascading )
         Order savedOrder = orderRepository.save(order);
-        // if you want to be 100% sure the INSERT happened now:
+        // if I want to be 100% sure the INSERT happened now:
         // entityManager.flush();
 
+        System.out.println("===========DEBUG LOG=========");
         System.out.println("Saved order id = " + savedOrder.getId());
         savedOrder.getOrderItems().forEach(oi ->
                 System.out.println("Saved orderItem id = " + oi.getId() + " for product " + oi.getProduct().getId())
@@ -200,7 +201,7 @@ public class CartService implements CartInterface {
     public void ClearCart() throws CartItemNotFoundException {
         Cart cart = userService.getCurrentUser(userService.getCurrentUsername()).getCart();
 
-        // نعمل نسخة مستقلة من العناصر
+//        iterate on copy to be safe
         Set<CartItem> itemsCopy = new HashSet<>(cart.getCartItems());
 
         for (CartItem cartItem : itemsCopy) {

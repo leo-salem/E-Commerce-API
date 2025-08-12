@@ -75,6 +75,7 @@ public class CategoryService implements CategoryInterface {
             product.setCategory(category);
             productRepository.save(product);
         }
+        no need for this cause any new category will not be built with products
         */
         categoryRepository.save(category);
     }

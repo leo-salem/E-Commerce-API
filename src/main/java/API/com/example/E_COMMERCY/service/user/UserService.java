@@ -147,24 +147,21 @@ public class UserService implements UserInterface{
         tokenService.deleteAccessToken(username);
         tokenService.deleteRefreshToken(username);
 
-        // فك الارتباط مع الطلبات
+
         if (user.getOrders() != null) {
             user.getOrders().forEach(deletionService::deleteOrder);
             user.getOrders().clear();
         }
 
-        // حذف الكارت
         if (user.getCart() != null) {
             deletionService.deleteCart(user.getCart());
         }
 
-        // حذف الـ Categories (لو Admin)
         if (user.getCategories() != null) {
             user.getCategories().forEach(deletionService::deleteCategory);
             user.getCategories().clear();
         }
 
-        // فك الارتباط مع Products الخاصة بالمستخدم (لو USER)
         if (user.getProducts() != null) {
             user.getProducts().forEach(deletionService::deleteProduct);
             user.getProducts().clear();

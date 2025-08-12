@@ -1,7 +1,6 @@
 package API.com.example.E_COMMERCY.dto.orderItem;
 
 import API.com.example.E_COMMERCY.dto.product.ProductResponseDto;
-import API.com.example.E_COMMERCY.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -24,11 +24,15 @@ public class CartItemMapper {
     private final @Lazy ProductRepository productRepository;
 
     public CartItemResponseDto toDto(CartItem cartItem){
+
+        System.out.println("===========DEBUG LOG=========");
         System.out.println("CartItemMapper-> in it");
         if(cartItem.getProduct() == null){
             System.out.println("cartItem.getProduct == null");
             return null;
         }
+
+
         return CartItemResponseDto.builder()
                 .id((long) cartItem.getId())
                 .quantity(cartItem.getQuantity())

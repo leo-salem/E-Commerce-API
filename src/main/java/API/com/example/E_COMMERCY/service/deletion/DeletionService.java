@@ -29,7 +29,7 @@ public class DeletionService implements DeletionInterface{
             order.getUser().getOrders().remove(order);
             order.setUser(null);
         }
-        em.flush();
+        em.flush(); //important to save any operations before delete it
         em.remove(em.contains(order) ? order : em.merge(order));
     }
 
